@@ -1,0 +1,84 @@
+:root {
+    --border-color: rgb(185, 185, 185);
+    --border-radius: 6px;
+    --black-color: #333;
+    --caption-color: #3B5998;
+    --error-color: red;
+    --datatable-color: #E1E1E1;
+    --datatable-dark-cell-color: #f8f8f8;
+    --message-border-color: #1E88E5;
+    --message-background-color: #E3F2FD;
+
+    --white-color: #f8f8f8;
+    --gray-color: rgb(113, 118, 123);
+
+    color: var(--black-color);
+    font-size: 16px;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    padding: 0.5rem;
+    min-width: 320px;
+    max-width: 1280px;
+    margin: 0 auto;
+    background-color: rgb(233, 219, 199);
+}
+
+header img {
+    background-color: var(--white-color);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 3rem;
+    text-align: center;
+}
+
+
+header .navbar {
+    background-color: var(--white-color);
+    margin-top: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1rem 1rem 2rem 1rem;
+}
+
+.navbar nav {
+    position: relative;
+    float: left;
+    text-transform: uppercase;
+}
+
+.navbar nav a {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #2c3e50;
+    text-decoration: none;
+    letter-spacing: .2rem;
+}
+
+.navbar nav a.router-link-exact-active {
+    color: #cbbe3d;
+}
+
+.navbar .user-login,
+.navbar .user-logout {
+    float: right;
+}
+
+.navbar .user-login a,
+.navbar .user-logout a {
+    text-decoration: underline;
+    color: #1E88E5;
+    cursor: pointer;
+}
+
+#person-user-link {
+    text-decoration: none;
+    color: #3B5998;
+}
+

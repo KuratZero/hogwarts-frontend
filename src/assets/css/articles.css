@@ -1,0 +1,52 @@
+main {
+    margin-top: 1.5rem;
+    border-collapse: collapse;
+}
+
+main article {
+    margin-bottom: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--white-color);
+    min-height: 60px;
+    color: black;
+}
+
+main article .left {
+    float: left;
+}
+
+main article .left img {
+    border-radius: 15px;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+}
+
+main article .right {
+    min-height: 52px;
+    padding-left: 4.3rem;
+    padding-top: 0.5rem;
+}
+
+main article .right a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+main article .right .body {
+    color: var(--black-color);
+}
+
+main article .right .person {
+    padding-bottom: 0.4rem;
+}
+
+main article .right .person .person-nick,
+main article .right .person .time {
+    color: var(--gray-color);
+}
+
+main article .footer {
+    padding: 5px 10px 5px 9px;
+    text-align: center;
+}

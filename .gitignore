@@ -21,3 +21,9 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+/public/icoes/loading.gif
+/public/icoes/tema.jpg
+/public/icoes/vera.jpg
+/public/icoes/vera120.jpg
+/public/icoes/dambldor.jpg
+/public/icoes/garry.jpg

@@ -1,0 +1,95 @@
+.user-block {
+    margin-top: 1rem;
+    background-color: var(--white-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-color);
+    padding: 10px;
+    min-height: 150px;
+}
+
+.user-block .avatar {
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.user-block .user .person {
+    border-bottom: 1px solid var(--gray-color);
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    font-weight: lighter;
+}
+
+.user-block .body,
+.user-block .footer {
+    padding-left: 130px;
+}
+
+.user-block .body {
+    padding-top: 10px;
+    min-height: 105px;
+}
+
+.user-block .about {
+
+}
+
+
+
+/**/
+
+.input-file {
+    position: relative;
+    display: inline-block;
+}
+
+.input-file span {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    font-size: 14px;
+    vertical-align: middle;
+    color: rgb(255 255 255);
+    text-align: center;
+    border-radius: 2px;
+    background-color: #419152;
+    line-height: 20px;
+    height: 30px;
+    width: 120px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    /*padding: 5px 5px 5px 5px;*/
+    box-sizing: border-box;
+    border: none;
+    margin: 0;
+    transition: background-color 0.2s;
+}
+.input-file input[type=file] {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+    display: block;
+    width: 0;
+    height: 0;
+}
+
+/* Focus */
+.input-file input[type=file]:focus + span {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Hover/active */
+.input-file:hover span {
+    background-color: #59be6e;
+}
+.input-file:active span {
+    background-color: #2E703A;
+}
+
+/* Disabled */
+.input-file input[type=file]:disabled + span {
+    background-color: #eee;
+}

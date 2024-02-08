@@ -1,0 +1,131 @@
+.form-box {
+    background-color: var(--white-color);
+    margin-top: 1rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 22rem;
+    border: 1px solid var(--gray-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    border-collapse: collapse;
+}
+
+.form-box .header {
+    border-bottom: 1px solid var(--gray-color);
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.form-box .field {
+    padding: 10px 10px 0 10px;
+    height: 30px;
+}
+
+.form-box .textarea {
+    text-align: center;
+    padding: 10px 1px 0 1px;
+    height: auto;
+}
+
+.form-box .textarea textarea {
+    resize: vertical;
+    max-width: 100%;
+    min-width: 100%;
+}
+
+.form-box .field .name {
+    float: left;
+}
+
+.form-box .field .value {
+    float: right;
+}
+
+.form-box .field .value input {
+    width: 11rem;
+}
+
+.form-box .error {
+    padding: 0;
+    text-align: center;
+    color: crimson;
+}
+
+.form-box .button-field {
+    text-align: center;
+}
+
+.form-box .update-image {
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--gray-color);
+}
+
+.update form {
+    padding-top: 10px;
+}
+
+/* FORM TEXT */
+
+.form-text {
+    background-color: var(--white-color);
+    margin-top: 1rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 93%;
+    border: 1px solid var(--gray-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    border-collapse: collapse;
+}
+
+.form-text .header {
+    border-bottom: 1px solid var(--gray-color);
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.form-text .field {
+    text-align: center;
+    padding: 10px 10px 10px 10px;
+    height: 35px;
+}
+
+.form-text .textarea {
+    text-align: center;
+    padding: 10px 1px 0 1px;
+    height: auto;
+}
+
+.form-text .name {
+    padding-bottom: 5px;
+}
+
+.form-text .textarea textarea {
+    resize: vertical;
+    width: 100%;
+    height: 15rem;
+}
+
+.form-text .field .value input {
+    width: 90%;
+}
+
+.form-text .error {
+    padding: 0;
+    text-align: center;
+    color: crimson;
+}
+
+.form-text .button-field {
+    text-align: center;
+}
+
+.form-text .button-field input {
+    text-transform: uppercase;
+    width: 15rem;
+}
