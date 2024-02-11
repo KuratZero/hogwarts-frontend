@@ -16,7 +16,7 @@ export default {
     }
   },
   beforeMount() {
-    this.$root.$on("on-register-validation-error", (error) => this.error = error);
+    this.$root.$on("on-register-error", (error) => this.error = error);
   }
 }
 </script>

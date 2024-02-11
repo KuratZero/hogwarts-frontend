@@ -23,7 +23,7 @@ export default {
         <router-link to="/info">Info</router-link>
         <span v-if="user">
           |
-          <router-link to="/writePost">Write Post</router-link>
+          <router-link to="/writePost">Post</router-link>
         </span>
       </nav>
 

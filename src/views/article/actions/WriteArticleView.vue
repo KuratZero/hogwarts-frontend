@@ -4,15 +4,17 @@ export default {
   props: ["user"],
   data() {
     return {
-      title: "",
       text: "",
       error: ""
     }
   },
   methods: {
     onWritePost() {
-
+      this.$root.$emit("on-write-article", this.text)
     }
+  },
+  beforeMount() {
+    this.$root.$on("on-write-article-error", error => this.error = error)
   }
 }
 </script>
@@ -22,14 +24,6 @@ export default {
     <div class="header">Write Post</div>
     <div class="body">
       <form @submit.prevent="onWritePost">
-        <div class="field">
-          <div class="name">
-            <label for="title">Title</label>
-          </div>
-          <div class="value">
-            <input id="title" name="title" type="text" v-model="title"/>
-          </div>
-        </div>
         <div class="textarea">
           <div class="name">
             <label for="text">Text</label>

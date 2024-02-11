@@ -24,14 +24,7 @@ export default {
   methods: {
     updateImage(personId) {
       this.image = null
-
-      axios.get("/api/1/user/avatar", {params: {"id": personId}})
-          .then(response => {
-            if (response.data) {
-              this.image = response.data
-            }
-          })
-          .catch(error => this.$root.$emit("on-notify", "error", "Server error. Try again later. " + error))
+      this.$root.$emit("on-get-image", 'user-update-image', personId)
     },
 
     onUpdate() {
@@ -42,19 +35,16 @@ export default {
       let data = new FormData();
       data.append('file', event.target.files[0]);
 
-      axios.put(
-          '/api/1/user/avatar',
-          data,
+      axios.put('/api/1/user/avatar', data,
           {
             headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem("jwt"),
-              'Content-Type': 'image/png'
+              'Authorization': 'Bearer ' + localStorage.getItem("jwt")
             }
           }
       ).then(() => {
         this.$root.$emit("on-notify", "success", "Uploaded image successfully!")
         this.updateImage(this.person.id)
-      }).catch(error => this.$root.$emit("on-notify", "error", "Error while uploading: " + error))
+      }).catch(error => this.$root.$emit("on-notify", "error", "Error while uploading: " + error.response.data))
     }
   },
   beforeCreate() {
@@ -62,28 +52,28 @@ export default {
 
     axios.get("/api/1/user", {params: {"login": this.$route.params.name}})
         .then(response => {
-          if (response.data) {
-            this.person = response.data
-            if (!this.isOwner) {
-              this.$root.$emit("on-notify", "message", "You are not the owner")
-              this.$router.push('/')
-            }
-            if (this.person.info) {
-              this.info = this.person.info
-            }
-            this.info.name = this.person.name
-            this.updateImage(this.person.id)
-          } else {
-            this.$root.$emit("on-notify", "error", "Not found such user.")
+          this.person = response.data
+
+          if (!this.isOwner) {
+            this.$root.$emit("on-notify", "message", "You are not the owner")
             this.$router.push('/')
+            return;
           }
+
+          if (this.person.info)
+            this.info = this.person.info
+
+          this.info.name = this.person.name
+          this.updateImage(this.person.id)
+
         })
-        .catch(() => {
-          this.$root.$emit("on-notify", "error", "Server error. Try again later.")
+        .catch(error => {
+          this.$root.$emit("on-notify", "error", error.response.data)
           this.$router.push('/')
         })
   },
   beforeMount() {
+    this.$root.$on('user-update-image', image => this.image = image)
     this.$root.$on("on-update-error", error => this.error = error)
   }
 }

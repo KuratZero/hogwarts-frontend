@@ -14,7 +14,7 @@ export default {
     }
   },
   beforeMount() {
-    this.$root.$on("on-login-validation-error", (error) => this.error = error);
+    this.$root.$on("on-login-error", (error) => this.error = error);
   }
 }
 </script>

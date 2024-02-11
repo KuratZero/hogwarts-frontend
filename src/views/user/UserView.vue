@@ -21,13 +21,7 @@ export default {
     updateImage(personId) {
       this.image = null
 
-      axios.get("/api/1/user/avatar", {params: {"id": personId}})
-          .then(response => {
-            if (response.data) {
-              this.image = response.data
-            }
-          })
-          .catch(error => this.$root.$emit("on-notify", "error", "Server error. Try again later. " + error))
+      this.$root.$emit("on-get-image", 'user-image', personId)
     },
 
     updatePerson(personName) {
@@ -37,16 +31,10 @@ export default {
 
       axios.get("/api/1/user", {params: {"login": personName}})
           .then(response => {
-            if (response.data) {
-              this.person = response.data
-              this.updateImage(this.person.id)
-            } else {
-              this.error = "Not found such user."
-            }
+            this.person = response.data
+            this.updateImage(this.person.id)
           })
-          .catch(error => this.error = "Server error. Try again later. " + error)
-
-
+          .catch(error => this.error = error.response.data)
     }
   },
   created() {
@@ -59,6 +47,7 @@ export default {
   },
   beforeMount() {
     this.updatePerson(this.$route.params.name)
+    this.$root.$on("user-image", image => this.image = image)
   }
 }
 </script>
@@ -82,16 +71,18 @@ export default {
           Update info.
         </router-link>
         <div class="info" v-if="person.info">
-          About: {{person.info.about}}
+          About: {{ person.info.about }}
           <br/>
-          City: {{person.info.city}}
+          City: {{ person.info.city }}
         </div>
         <div class="info" v-else>
           Nothing here
         </div>
       </div>
 
-      <div class="footer">Likes, Posts</div>
+      <div class="footer">
+        <router-link :to="'/user/' + person.login + '/posts'">Posts</router-link>
+      </div>
 
     </div>
     <h2 v-if="this.error">{{ error }}</h2>

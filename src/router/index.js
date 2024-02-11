@@ -5,8 +5,9 @@ import InfoView from '../views/InfoView.vue'
 import UserView from '../views/user/UserView.vue'
 import LoginView from '../views/user/actions/LoginView.vue'
 import RegisterView from '../views/user/actions/RegisterView.vue'
-import WritePostView from '../views/post/actions/WritePostView.vue'
+import WritePostView from '@/views/article/actions/WriteArticleView.vue'
 import UserUpdateView from "@/views/user/actions/UserUpdateView.vue";
+import UserPostsView from "@/views/article/UserArticlesView.vue";
 
 Vue.use(VueRouter)
 
@@ -30,6 +31,11 @@ const routes = [
     path: '/user/:name/update',
     name: 'user-page-update',
     component: UserUpdateView
+  },
+  {
+    path: '/user/:name/posts',
+    name: 'user-posts-page',
+    component: UserPostsView
   },
   {
     path: '/register',
