@@ -1,6 +1,7 @@
 <script>
 import axios from "axios"
 import ArticlesBlock from "@/components/ArticlesBlock.vue";
+import {articlesHandlers, events} from "@/assets/apies";
 
 export default {
   name: 'HomeView',
@@ -8,24 +9,33 @@ export default {
   components: {ArticlesBlock},
   data() {
     return {
-      articles: null
+      articles: null,
+      status: "Loading..."
+    }
+  },
+  methods: {
+    updateArticles() {
+      axios.get(articlesHandlers.getArticles)
+          .then(response => this.articles = response.data)
+          .catch(error => this.status = error.response.data)
     }
   },
   beforeMount() {
-    axios.get("/api/1/posts")
-        .then(response => {
-          this.articles = response.data
-        })
-        .catch(() => {
-          this.$root.$emit("on-notify", "error", "Server error. Try again later.")
-        })
+    this.updateArticles()
+
+    this.$root.$on(events.updateArticles, () => this.updateArticles())
   }
 }
 </script>
 
 <template>
   <main>
-    <ArticlesBlock v-if="articles" :user="user" :articles="articles"/>
-    <div v-else>Loading...</div>
+    <ArticlesBlock class="articles"
+                   :status="status"
+                   :user="user"
+                   :articles="articles"
+                   :viewComments="false"
+                   :viewAll="true"
+    />
   </main>
 </template>

@@ -8,6 +8,7 @@ import RegisterView from '../views/user/actions/RegisterView.vue'
 import WritePostView from '@/views/article/actions/WriteArticleView.vue'
 import UserUpdateView from "@/views/user/actions/UserUpdateView.vue";
 import UserPostsView from "@/views/article/UserArticlesView.vue";
+import OneArticleView from "@/views/article/OneArticleView.vue";
 
 Vue.use(VueRouter)
 
@@ -51,6 +52,11 @@ const routes = [
     path: '/writePost',
     name: 'write-post',
     component: WritePostView
+  },
+  {
+    path: '/post/:id',
+    name: 'one-post',
+    component: OneArticleView
   }
 ]
 

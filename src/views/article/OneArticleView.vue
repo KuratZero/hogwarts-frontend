@@ -1,20 +1,20 @@
 <script>
-import axios from "axios";
 import ArticlesBlock from "@/components/ArticlesBlock.vue";
+import axios from "axios";
 
 export default {
-  name: "UserPostsView",
+  name: "OnePostView",
   components: {ArticlesBlock},
   props: ["user"],
   data() {
     return {
-      articles: null,
+      article: null,
       status: "Loading..."
     }
   },
   beforeMount() {
-    axios.get("/api/1/posts/" + this.$route.params.name)
-        .then(response => this.articles = response.data)
+    axios.get('/api/1/post/' + this.$route.params.id)
+        .then(response => this.article = response.data)
         .catch(error => this.status = error.response.data)
   }
 }
@@ -23,9 +23,9 @@ export default {
 <template>
   <ArticlesBlock class="articles"
                  :status="status"
+                 :articles="article ? [article] : null"
                  :user="user"
-                 :articles="articles"
-                 :viewComments="false"
-                 :viewAll="true"
+                 :viewComments="true"
+                 :viewAll="false"
   />
 </template>

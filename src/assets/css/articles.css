@@ -38,7 +38,9 @@ article .right a {
 
 article .right .body {
     padding-left: 21px;
-    white-space: pre-wrap;
+    padding-right: 10px;
+    white-space: pre-line;
+    overflow-wrap: break-word;
     color: var(--black-color);
 }
 

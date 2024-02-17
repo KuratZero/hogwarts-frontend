@@ -1,4 +1,6 @@
 <script>
+import {errorEvent, events} from "@/assets/apies";
+
 export default {
   name: "WritePostView",
   props: ["user"],
@@ -10,11 +12,11 @@ export default {
   },
   methods: {
     onWritePost() {
-      this.$root.$emit("on-write-article", this.text)
+      this.$root.$emit(events.writeArticle, this.text)
     }
   },
   beforeMount() {
-    this.$root.$on("on-write-article-error", error => this.error = error)
+    this.$root.$on(errorEvent(events.writeArticle), error => this.error = error)
   }
 }
 </script>

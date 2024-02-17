@@ -2,6 +2,14 @@
 export default {
   name: "HeaderBlock",
   props: ["user"],
+  data() {
+    return {
+      navigation: [
+        ["Login", "/login"],
+        ["Register", "/register"]
+      ]
+    }
+  },
   methods: {
     onLogout() {
       this.$root.$emit('on-logout');

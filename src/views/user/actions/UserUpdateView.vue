@@ -1,5 +1,6 @@
 <script>
 import axios from "axios";
+import {errorEvent, events, jwtHeader, notify, usersHandlers} from "@/assets/apies";
 
 export default {
   name: "UserUpdateView",
@@ -24,38 +25,53 @@ export default {
   methods: {
     updateImage(personId) {
       this.image = null
-      this.$root.$emit("on-get-image", 'user-update-image', personId)
+      this.$root.$emit(events.getImage, 'user-update-image', personId)
     },
 
     onUpdate() {
-      this.$root.$emit("on-update", this.info)
+      this.$root.$emit(events.updateInfo, this.info)
     },
 
     uploadImage(event) {
+      if (!localStorage.getItem("jwt")) {
+        this.$root.$emit(notify.event, notify.error, "You have to authorize")
+        return;
+      }
+
       let data = new FormData();
       data.append('file', event.target.files[0]);
 
-      axios.put('/api/1/user/avatar', data,
-          {
-            headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem("jwt")
-            }
-          }
+      axios.put(usersHandlers.avatar, data,
+          {headers: jwtHeader(localStorage.getItem("jwt"))}
       ).then(() => {
-        this.$root.$emit("on-notify", "success", "Uploaded image successfully!")
+        this.$root.$emit(notify.event, notify.success, "Uploaded image successfully!")
         this.updateImage(this.person.id)
-      }).catch(error => this.$root.$emit("on-notify", "error", "Error while uploading: " + error.response.data))
+      }).catch(error => this.$root.$emit(notify.event, notify.error, "Error: " + error.response.data))
+    },
+
+    deleteImage() {
+      if (!localStorage.getItem("jwt")) {
+        this.$root.$emit(notify.event, notify.error, "You have to authorize")
+        return;
+      }
+
+      axios.delete(usersHandlers.avatar, {headers: jwtHeader(localStorage.getItem("jwt"))})
+          .then(() => {
+            this.$root.$emit(notify.event, notify.success, "Avatar deleted successfully!")
+            this.updateImage(this.person.id)
+          })
+          .catch(error => this.$root.$emit(notify.event, notify.error, "Error: " + error.response.data))
     }
   },
   beforeCreate() {
     this.person = null
 
-    axios.get("/api/1/user", {params: {"login": this.$route.params.name}})
+    axios.get(usersHandlers.get, {params: {"login": this.$route.params.name}})
         .then(response => {
           this.person = response.data
 
           if (!this.isOwner) {
-            this.$root.$emit("on-notify", "message", "You are not the owner")
+            this.$root.$emit(notify.event, notify.message, "You are not the owner")
             this.$router.push('/')
             return;
           }
@@ -68,13 +84,13 @@ export default {
 
         })
         .catch(error => {
-          this.$root.$emit("on-notify", "error", error.response.data)
+          this.$root.$emit(notify.event, notify.error, error.response.data)
           this.$router.push('/')
         })
   },
   beforeMount() {
     this.$root.$on('user-update-image', image => this.image = image)
-    this.$root.$on("on-update-error", error => this.error = error)
+    this.$root.$on(errorEvent(events.updateInfo), error => this.error = error)
   }
 }
 </script>
@@ -86,9 +102,12 @@ export default {
       <img v-else :src="image" :alt="'avatar of' + person.name"/>
       <form>
         <label class="input-file">
-          <input type="file" accept="image/*" @change="uploadImage($event)" id="avatar-input">
+          <input type="file" accept="image/*" @change="uploadImage($event)">
           <span>Update image</span>
         </label>
+      </form>
+      <form class="delete-button" @submit.prevent="deleteImage">
+        <input type="submit" value="Delete avatar">
       </form>
     </div>
 

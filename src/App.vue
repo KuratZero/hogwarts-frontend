@@ -3,6 +3,7 @@ import {defineComponent} from "vue";
 import HeaderBlock from "@/components/HeaderBlock.vue";
 import axios from "axios";
 import router from "@/router";
+import {articlesHandlers, errorEvent, events, jwtHeader, notify, notifyOptions, usersHandlers} from "@/assets/apies";
 
 export default defineComponent({
   components: {HeaderBlock},
@@ -12,30 +13,22 @@ export default defineComponent({
     }
   },
   methods: {
-    jwtHeader(jwt) {
-      return {'Authorization': 'Bearer ' + jwt}
-    },
-    notBlankAndEmit(error, name, ...text) {
-      for (let i = 0; i < text.length; i++) {
-        let arg = text[i].trim();
+    notBlankAndEmit(error, names, ...texts) {
+      for (let i = 0; i < texts.length; i++) {
+        let arg = texts[i].trim();
         if (arg === '') {
-          this.$root.$emit(error, name[i] + ' is required')
+          this.$root.$emit(error, names[i] + ' is required')
           return false
         }
       }
       return true
     }
   }, beforeMount() {
-    this.$root.$on("on-notify", (method, message) => {
-      const notifyOptions = {
-        theme: "bubble",
-        position: "bottom-right",
-        duration: 2500
-      }
 
+    this.$root.$on(notify.event, (method, message) => {
       switch (method) {
         case "message":
-          this.$toasted.show(message, notifyOptions);
+          this.$toasted.info(message, notifyOptions);
           break;
         case "success":
           this.$toasted.success(message, notifyOptions);
@@ -46,116 +39,93 @@ export default defineComponent({
       }
     })
 
-
-    this.$root.$on("on-jwt", (jwt) => {
+    this.$root.$on(events.auth, (jwt) => {
       localStorage.setItem("jwt", jwt);
-      axios.get("/api/1/user/auth", {
-        headers: this.jwtHeader(jwt)
-      }).then(response => this.user = response.data).catch(() => {
-        this.$root.$emit("on-logout")
-        this.$root.$emit("on-notify", "error", "Error while authentication.")
-      })
+
+      axios.get(usersHandlers.auth, {headers: jwtHeader(jwt)})
+          .then(response => this.user = response.data)
+          .catch(() => {
+            this.$root.$emit(events.logout)
+            this.$root.$emit(notify.event, notify.error, "Error while authentication.")
+          })
     });
 
-    this.$root.$on("on-login", (from, login, password) => {
-      if (!this.notBlankAndEmit(`on-${from}-error`, ['Login', 'Password'],
-          login, password)) {
+    this.$root.$on(events.login, (from, login, password) => {
+      if (!this.notBlankAndEmit(`on-${from}-error`,
+          ['Login', 'Password'], login, password)) {
         return;
       }
 
-      axios.post("/api/1/jwt", {
-        "login": login.trim(), "password": password.trim()
-      }).then(response => {
-        localStorage.setItem("jwt", response.data);
-        this.$root.$emit("on-jwt", response.data);
+      axios.post(usersHandlers.login, {"login": login.trim(), "password": password.trim()})
+          .then(response => {
+            this.$root.$emit(events.auth, response.data);
 
-        if (router.currentRoute.path !== "/") {
-          router.push('/')
-        }
+            if (router.currentRoute.path !== "/") {
+              router.push('/')
+            }
 
-        this.$root.$emit("on-notify", "success", "You have been authenticated!")
-      }).catch(error => this.$root.$emit(`on-${from}-error`, error.response.data));
+            this.$root.$emit(notify.event, notify.success, "You have been authenticated!")
+          })
+          .catch(error => this.$root.$emit(`on-${from}-error`, error.response.data));
     });
 
-    this.$root.$on("on-logout", () => {
-      this.$root.$emit("on-notify", "message", "Good bye!")
+    this.$root.$on(events.logout, () => {
+      this.$root.$emit(notify.event, notify.message, "Good bye!")
       localStorage.removeItem("jwt");
       this.user = null;
     });
 
-    this.$root.$on('on-register', (name, login, password, passwordRe) => {
-      if (!this.notBlankAndEmit('on-register-error',
-          ['Name', 'Login', 'Password', 'Repeat Password'],
-          name, login, password, passwordRe)) {
-        return;
-      }
-
-      if (password.trim() !== passwordRe.trim()) {
-        this.$root.$emit('on-register-error', "Passwords are not the same.")
-        return;
-      }
-
-      axios.post('/api/1/user/register', {"login": login.trim(), "name": name.trim(), "password": password.trim()})
-          .then(() => this.$root.$emit("on-login", 'register', login.trim(), password.trim()))
-          .catch(error => this.$root.$emit('on-register-error', error.response.data))
+    this.$root.$on(events.getImage, (from, id) => {
+      axios.get(usersHandlers.avatar, {params: {"id": id}})
+          .then(response => this.$root.$emit(from, response.data))
+          .catch(error => {
+            if (error.response.status !== 404)
+              this.$root.$emit(notify.event, notify.error, "Server error. Try again later. " + error)
+          })
     })
 
-    this.$root.$on("on-write-article", (text) => {
+    this.$root.$on(events.writeArticle, (text) => {
       if (!localStorage.getItem('jwt')) {
-        this.$root.$emit("on-write-article-error", "Error authenticating.")
+        this.$root.$emit(errorEvent(events.writeArticle), "Error authenticating.")
         return
       }
 
-      if (!this.notBlankAndEmit("on-write-article-error",
-          ["Text"], text)) {
+      if (!this.notBlankAndEmit(errorEvent(events.writeArticle), ["Text"], text)) {
         return;
       }
 
-      axios.post('/api/1/post', {text}, {
-        headers: this.jwtHeader(localStorage.getItem('jwt'))
-      }).then(() => {
-        this.$router.push("/")
-        this.$root.$emit("on-notify", "success", "Post successfully published")
-      })
-          .catch(error => this.$root.$emit("on-write-article-error", error))
+      axios.post(articlesHandlers.writeArticle, {"text": text.trim()},
+          {headers: jwtHeader(localStorage.getItem('jwt'))})
+          .then(() => {
+            if (this.$route.path !== '/')
+              this.$router.push("/")
+            this.$root.$emit(notify.event, notify.success, "Post successfully published.")
+          }).catch(error => this.$root.$emit(errorEvent(events.writeArticle), error))
     })
 
-    this.$root.$on("on-update", info => {
+    this.$root.$on(events.updateInfo, info => {
       if (!localStorage.getItem('jwt')) {
-        this.$root.$emit("on-update-error", "Error authenticating.")
+        this.$root.$emit(errorEvent(events.updateInfo), "Error authenticating.")
         return
       }
 
-      if (this.notBlankAndEmit("on-update-error", ["Name"], info.name)) {
+      if (this.notBlankAndEmit(errorEvent(events.updateInfo), ["Name"], info.name)) {
         info.name = info.name.trim()
         info.about = info.about.trim()
         info.city = info.city.trim()
-        axios.put('/api/1/user',
+        axios.put(usersHandlers.updateInfo,
             info,
             {
-              headers: this.jwtHeader(localStorage.getItem('jwt')),
-              params: {
-                "name": info.name
-              }
+              headers: jwtHeader(localStorage.getItem('jwt')),
+              params: {"name": info.name}
             })
-            .then(() => this.$root.$emit("on-notify", "success", "Updated successfully"))
-            .catch(error => this.$root.$emit("on-update-error", error))
+            .then(() => this.$root.$emit(notify.event, notify.success, "Updated successfully"))
+            .catch(error => this.$root.$emit(errorEvent(events.updateInfo), error))
       }
     })
 
-    this.$root.$on("on-get-image", (from, id) => {
-      axios.get("/api/1/user/avatar", {params: {"id": id}})
-          .then(response => {
-            this.$root.$emit(from, response.data)
-          })
-          .catch(error => {
-            if (error.response.status !== 404)
-              this.$root.$emit("on-notify", "error", "Server error. Try again later. " + error)
-          })
-    })
-
-    if (localStorage.getItem("jwt") && !this.user) {
-      this.$root.$emit("on-jwt", localStorage.getItem("jwt"));
+    if (!this.user && localStorage.getItem("jwt")) {
+      this.$root.$emit(events.auth, localStorage.getItem("jwt"));
     }
   }
 })
