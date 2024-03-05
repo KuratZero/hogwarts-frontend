@@ -1,48 +1,40 @@
 <script>
-import {errorEvent, events} from "@/assets/apies";
+import {articlesHandlers, errorEvent, events, jwtHeader, notify} from "@/assets/apies";
+import TextFormBlock from "@/components/TextFormBlock.vue";
+import axios from "axios";
 
 export default {
   name: "WritePostView",
-  props: ["user"],
+  computed: {
+    events() {
+      return events
+    }
+  },
   data() {
     return {
-      text: "",
-      error: ""
+      labels: ['Text']
     }
   },
-  methods: {
-    onWritePost() {
-      this.$root.$emit(events.writeArticle, this.text)
-    }
-  },
+  components: {TextFormBlock},
   beforeMount() {
-    this.$root.$on(errorEvent(events.writeArticle), error => this.error = error)
+    this.$root.$on(events.writeArticle, (texts) => {
+      let [text] = texts
+      axios.post(articlesHandlers.writeArticle, {text},
+          {headers: jwtHeader(localStorage.getItem('jwt'))})
+          .then(() => {
+            if (this.$route.path !== '/')
+              this.$router.push("/")
+            this.$root.$emit(notify.event, notify.success, "Post successfully published.")
+          })
+          .catch(error => this.$root.$emit(errorEvent(events.writeArticle), error))
+    })
   }
 }
 </script>
 
 <template>
-  <div class="write-post form-text">
-    <div class="header">Write Post</div>
-    <div class="body">
-      <form @submit.prevent="onWritePost">
-        <div class="textarea">
-          <div class="name">
-            <label for="text">Text</label>
-          </div>
-          <div class="value">
-            <textarea id="text" name="text" type="text" v-model="text"/>
-          </div>
-        </div>
-        <div class="field error">{{ error }}</div>
-        <div class="button-field">
-          <input type="submit" value="Publish post">
-        </div>
-      </form>
-    </div>
-  </div>
+  <TextFormBlock :event="events.writeArticle"
+                 header="Write Article" submit="Publish article"
+                 :labels="labels" :types="['textarea']"
+                 form="form-text"/>
 </template>
-
-<style scoped>
-
-</style>

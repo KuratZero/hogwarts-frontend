@@ -33,11 +33,6 @@ export default {
     },
 
     uploadImage(event) {
-      if (!localStorage.getItem("jwt")) {
-        this.$root.$emit(notify.event, notify.error, "You have to authorize")
-        return;
-      }
-
       let data = new FormData();
       data.append('file', event.target.files[0]);
 
@@ -50,11 +45,6 @@ export default {
     },
 
     deleteImage() {
-      if (!localStorage.getItem("jwt")) {
-        this.$root.$emit(notify.event, notify.error, "You have to authorize")
-        return;
-      }
-
       axios.delete(usersHandlers.avatar, {headers: jwtHeader(localStorage.getItem("jwt"))})
           .then(() => {
             this.$root.$emit(notify.event, notify.success, "Avatar deleted successfully!")
@@ -97,15 +87,18 @@ export default {
 
 <template>
   <div v-if="isOwner" class="update form-box">
+
     <div class="update-image">
       <img v-if="!image" src="../../../../public/icoes/load.gif" alt="loading..."/>
       <img v-else :src="image" :alt="'avatar of' + person.name"/>
+
       <form>
         <label class="input-file">
           <input type="file" accept="image/*" @change="uploadImage($event)">
           <span>Update image</span>
         </label>
       </form>
+
       <form class="delete-button" @submit.prevent="deleteImage">
         <input type="submit" value="Delete avatar">
       </form>
@@ -120,6 +113,7 @@ export default {
           <input id="name" name="name" type="text" v-model="info.name"/>
         </div>
       </div>
+
       <div class="field">
         <div class="name">
           <label for="about">About</label>
@@ -128,6 +122,7 @@ export default {
           <input id="about" name="about" type="text" v-model="info.about"/>
         </div>
       </div>
+
       <div class="field">
         <div class="name">
           <label for="city">City</label>
@@ -136,18 +131,18 @@ export default {
           <input id="city" name="city" type="text" v-model="info.city"/>
         </div>
       </div>
+
       <div class="field error">{{ error }}</div>
+
       <div class="button-field">
         <input type="submit" value="Update info">
       </div>
+
     </form>
 
   </div>
+
   <div v-else>
     Loading...
   </div>
 </template>
-
-<style scoped>
-
-</style>

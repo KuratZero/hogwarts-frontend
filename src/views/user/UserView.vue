@@ -88,7 +88,3 @@ export default {
     <h2 v-if="this.error">{{ error }}</h2>
   </div>
 </template>
-
-<style scoped>
-
-</style>

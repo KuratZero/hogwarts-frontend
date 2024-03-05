@@ -1,53 +1,29 @@
 <script>
+import TextFormBlock from "@/components/TextFormBlock.vue";
+import {betweenEvent, events} from "@/assets/apies";
+
 export default {
   name: "LoginView",
-  data: function () {
-    return {
-      login: "",
-      password: "",
-      error: ""
+  methods: {betweenEvent},
+  computed: {
+    events() {
+      return events
     }
   },
-  methods: {
-    onLogin() {
-      this.$root.$emit("on-login", 'login', this.login, this.password);
-    }
-  },
+  components: {TextFormBlock},
   beforeMount() {
-    this.$root.$on("on-login-error", (error) => this.error = error);
+    this.$root.$on(betweenEvent(events.login), (texts) => {
+      let [login, password] = texts
+      this.$root.$emit(events.login, 'login-between', login, password);
+    });
   }
 }
 </script>
 
 <template>
-  <div class="enter form-box">
-    <div class="header">Log In</div>
-    <div class="body">
-      <form @submit.prevent="onLogin">
-        <div class="field">
-          <div class="name">
-            <label for="login">Login</label>
-          </div>
-          <div class="value">
-            <input id="login" name="login" type="text" v-model="login"/>
-          </div>
-        </div>
-        <div class="field">
-          <div class="name">
-            <label for="password">Password</label>
-          </div>
-          <div class="value">
-            <input id="password" name="password" type="password" v-model="password"/>
-          </div>
-        </div>
-        <div class="field error">{{ error }}</div>
-        <div class="button-field">
-          <input type="submit" value="Login">
-        </div>
-      </form>
-    </div>
-  </div>
+  <TextFormBlock :event="betweenEvent(events.login)"
+                 header="Login" submit="Login"
+                 :labels="['Login', 'Password']"
+                 :types="['text', 'password']"
+                 form="form-box"/>
 </template>
-
-<style scoped>
-</style>

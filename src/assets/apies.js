@@ -6,6 +6,19 @@ export function errorEvent(event) {
     return event + '-error'
 }
 
+export function betweenEvent(event) {
+    return event + '-between'
+}
+
+export function notBlank(names, ...texts) {
+    for (let i = 0; i < names.length; i++) {
+        if (!texts[i] || texts[i].toString() === "") {
+            return names[i] + " is empty"
+        }
+    }
+    return null
+}
+
 export const notifyOptions = {
     theme: "bubble",
     position: "bottom-right",
@@ -28,11 +41,13 @@ export const events = {
     "writeArticle": "on-write-article",
     "updateArticles": "on-update-articles",
     "getImage": "on-get-image",
+    "writeComment": "on-write-comment",
 }
 
 export const articlesHandlers = {
     "getArticles": "/api/1/posts/",
     "writeArticle": "/api/1/post/",
+    "writeComment": "/api/1/post/",
     "deleteArticle": "/api/1/post/",
 }
 

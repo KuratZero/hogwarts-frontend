@@ -1,9 +1,15 @@
 <script>
 import ArticlesBlock from "@/components/ArticlesBlock.vue";
 import axios from "axios";
+import {events} from "@/assets/apies";
 
 export default {
   name: "OnePostView",
+  computed: {
+    events() {
+      return events
+    }
+  },
   components: {ArticlesBlock},
   props: ["user"],
   data() {
@@ -21,11 +27,13 @@ export default {
 </script>
 
 <template>
-  <ArticlesBlock class="articles"
-                 :status="status"
-                 :articles="article ? [article] : null"
-                 :user="user"
-                 :viewComments="true"
-                 :viewAll="false"
-  />
+  <div class="one-article">
+    <ArticlesBlock class="articles"
+                   :status="status"
+                   :articles="article ? [article] : null"
+                   :user="user"
+                   :viewComments="true"
+                   :viewAll="false"
+    />
+  </div>
 </template>

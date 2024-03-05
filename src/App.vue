@@ -3,7 +3,7 @@ import {defineComponent} from "vue";
 import HeaderBlock from "@/components/HeaderBlock.vue";
 import axios from "axios";
 import router from "@/router";
-import {articlesHandlers, errorEvent, events, jwtHeader, notify, notifyOptions, usersHandlers} from "@/assets/apies";
+import {errorEvent, events, jwtHeader, notify, notifyOptions, usersHandlers} from "@/assets/apies";
 
 export default defineComponent({
   components: {HeaderBlock},
@@ -56,7 +56,7 @@ export default defineComponent({
         return;
       }
 
-      axios.post(usersHandlers.login, {"login": login.trim(), "password": password.trim()})
+      axios.post(usersHandlers.login, {login, password})
           .then(response => {
             this.$root.$emit(events.auth, response.data);
 
@@ -84,31 +84,7 @@ export default defineComponent({
           })
     })
 
-    this.$root.$on(events.writeArticle, (text) => {
-      if (!localStorage.getItem('jwt')) {
-        this.$root.$emit(errorEvent(events.writeArticle), "Error authenticating.")
-        return
-      }
-
-      if (!this.notBlankAndEmit(errorEvent(events.writeArticle), ["Text"], text)) {
-        return;
-      }
-
-      axios.post(articlesHandlers.writeArticle, {"text": text.trim()},
-          {headers: jwtHeader(localStorage.getItem('jwt'))})
-          .then(() => {
-            if (this.$route.path !== '/')
-              this.$router.push("/")
-            this.$root.$emit(notify.event, notify.success, "Post successfully published.")
-          }).catch(error => this.$root.$emit(errorEvent(events.writeArticle), error))
-    })
-
     this.$root.$on(events.updateInfo, info => {
-      if (!localStorage.getItem('jwt')) {
-        this.$root.$emit(errorEvent(events.updateInfo), "Error authenticating.")
-        return
-      }
-
       if (this.notBlankAndEmit(errorEvent(events.updateInfo), ["Name"], info.name)) {
         info.name = info.name.trim()
         info.about = info.about.trim()
@@ -124,9 +100,8 @@ export default defineComponent({
       }
     })
 
-    if (!this.user && localStorage.getItem("jwt")) {
+    if (!this.user && localStorage.getItem("jwt"))
       this.$root.$emit(events.auth, localStorage.getItem("jwt"));
-    }
   }
 })
 </script>
